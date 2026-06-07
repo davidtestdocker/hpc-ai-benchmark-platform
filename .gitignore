@@ -1,0 +1,8 @@
+# Logs
+reports/*.log
+
+# Python
+__pycache__/
+
+# Vim
+*.swp
