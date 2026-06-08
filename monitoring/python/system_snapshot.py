@@ -2,8 +2,9 @@
 
 import socket
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 import shutil
+import os
 
 class SystemSnapshot:
 
@@ -36,15 +37,17 @@ class SystemSnapshot:
             return "WARNING"
 
         return "OK"
-
-
+    def get_cpu_count(self) -> int:
+        return os.cpu_count()
+    
 snapshot = SystemSnapshot()
 load_average = snapshot.get_load_average()
 hostname = socket.gethostname()
-now = datetime.utcnow()
+now = datetime.now(timezone.utc)
 mem_available = snapshot.get_mem_available()
 disk_usage =snapshot.get_disk_usage()
 disk_status = snapshot.get_disk_status()
+cpu_count = snapshot.get_cpu_count()
 
 snapshot = {
     "time": str(now),
@@ -52,7 +55,8 @@ snapshot = {
     "memory_available": mem_available,
     "load_average": load_average,
     "disk_usage": disk_usage,
-    "disk_status": disk_status
+    "disk_status": disk_status,
+    "cpu_count": cpu_count
 }
 
 with open("/root/hpc-ai-benchmark-platform/reports/system_snapshot.json", "w") as file:
