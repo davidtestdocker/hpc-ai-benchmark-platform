@@ -5,43 +5,46 @@ import json
 from datetime import datetime
 import shutil
 
+class SystemSnapshot:
 
-def get_mem_available() -> str:
-    with open("/proc/meminfo", "r") as file:
-        for line in file:
-            if line.startswith("MemAvailable:"):
-                return line.split()[1] + " kB"
+    def get_mem_available(self) -> str:
+        with open("/proc/meminfo", "r") as file:
+            for line in file:
+                if line.startswith("MemAvailable:"):
+                    return line.split()[1] + " kB"
 
-    return "unknown"
+        return "unknown"
 
-def get_load_average() -> str:
-    with open("/proc/loadavg", "r") as file:
-        data = file.read().split()
+    def get_load_average(self) -> str:
+        with open("/proc/loadavg", "r") as file:
+            data = file.read().split()
 
-    return f"{data[0]}, {data[1]}, {data[2]}"
+        return f"{data[0]}, {data[1]}, {data[2]}"
+  
+    def get_disk_usage(self) -> str:
+        total, used, free = shutil.disk_usage("/")
 
-def get_disk_usage() -> str:
-    total, used, free = shutil.disk_usage("/")
+        percent = round((used / total) * 100)
 
-    percent = round((used / total) * 100)
+        return f"{percent}%"
 
-    return f"{percent}%"
+    def get_disk_status(self) -> str:
+        disk_usage = self.get_disk_usage()
+        disk_num = int(disk_usage.replace("%", ""))
 
-def get_disk_status() -> str:
-    disk_usage = get_disk_usage()
-    disk_num = int(disk_usage.replace("%", ""))
+        if disk_num > 80:
+            return "WARNING"
 
-    if disk_num > 80:
-        return "WARNING"
+        return "OK"
 
-    return "OK"
 
-load_average = get_load_average()
+snapshot = SystemSnapshot()
+load_average = snapshot.get_load_average()
 hostname = socket.gethostname()
 now = datetime.utcnow()
-mem_available = get_mem_available()
-disk_usage = get_disk_usage()
-disk_status = get_disk_status()
+mem_available = snapshot.get_mem_available()
+disk_usage =snapshot.get_disk_usage()
+disk_status = snapshot.get_disk_status()
 
 snapshot = {
     "time": str(now),
@@ -52,5 +55,5 @@ snapshot = {
     "disk_status": disk_status
 }
 
-with open("../../reports/system_snapshot.json", "w") as file:
+with open("/root/hpc-ai-benchmark-platform/reports/system_snapshot.json", "w") as file:
     json.dump(snapshot, file, indent=4)
