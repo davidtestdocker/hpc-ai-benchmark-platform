@@ -39,25 +39,21 @@ class SystemSnapshot:
         return "OK"
     def get_cpu_count(self) -> int:
         return os.cpu_count()
-    
-snapshot = SystemSnapshot()
-load_average = snapshot.get_load_average()
-hostname = socket.gethostname()
-now = datetime.now(timezone.utc)
-mem_available = snapshot.get_mem_available()
-disk_usage =snapshot.get_disk_usage()
-disk_status = snapshot.get_disk_status()
-cpu_count = snapshot.get_cpu_count()
 
-snapshot = {
-    "time": str(now),
-    "hostname": hostname,
-    "memory_available": mem_available,
-    "load_average": load_average,
-    "disk_usage": disk_usage,
-    "disk_status": disk_status,
-    "cpu_count": cpu_count
-}
+    def generate_snapshot(self) -> dict:
+        return {
+            "time": str(datetime.now(timezone.utc)),
+            "hostname": socket.gethostname(),
+            "memory_available": self.get_mem_available(),
+            "load_average": self.get_load_average(),
+            "disk_usage": self.get_disk_usage(),
+            "disk_status": self.get_disk_status(),
+            "cpu_count": self.get_cpu_count()
+        }
+
+snapshot = SystemSnapshot()
+
+snapshot_data = snapshot.generate_snapshot()
 
 with open("/root/hpc-ai-benchmark-platform/reports/system_snapshot.json", "w") as file:
-    json.dump(snapshot, file, indent=4)
+    json.dump(snapshot_data, file, indent=4)
