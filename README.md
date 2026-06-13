@@ -2,20 +2,18 @@
 
 ## 專案介紹
 
-本專案為 Linux、Python、Monitoring、Automation、API 與 Infrastructure 技術學習專案。
+本專案是一個以 Linux、Python、Monitoring、Automation、REST API 與 Infrastructure 為主軸的學習型工程專案。
 
-目標是透過實作方式學習：
+目標是透過實作方式，逐步建立一套可展示於履歷與面試的 Monitoring / Benchmark Platform。
 
-* Linux 效能分析
-* Shell Script 自動化
-* Python 開發
-* Monitoring 系統設計
-* REST API 開發
-* Terraform
-* Kubernetes
-* GitOps
+目前已完成：
 
-並逐步建立一套可展示於履歷與面試的作品。
+- Linux 效能分析
+- Shell Script 自動化監控
+- Cron 自動執行
+- Python Monitoring Collector
+- JSON Report 輸出
+- FastAPI Monitoring API
 
 ---
 
@@ -45,12 +43,12 @@ GitOps
 
 已完成：
 
-* Process Analysis
-* Memory Analysis
-* Network Analysis
-* vmstat Analysis
-* iostat Analysis
-* SAR Analysis
+- Process Analysis
+- Memory Analysis
+- Network Analysis
+- vmstat Analysis
+- iostat Analysis
+- SAR Analysis
 
 相關文件：
 
@@ -75,16 +73,13 @@ monitoring/scripts/system_snapshot.sh
 
 功能：
 
-* 取得主機名稱
-* 取得可用記憶體
-* 取得 Load Average
-* 取得磁碟使用率
-* 判斷磁碟狀態
-
-支援：
-
-* Log 輸出
-* Cron 自動執行
+- 取得主機名稱
+- 取得可用記憶體
+- 取得 Load Average
+- 取得磁碟使用率
+- 判斷磁碟狀態
+- 輸出 Log
+- 使用 Cron 自動執行
 
 相關文件：
 
@@ -94,7 +89,7 @@ docs/shell-automation.md
 
 ---
 
-## Python Monitoring
+## Python Monitoring Collector
 
 建立：
 
@@ -104,21 +99,24 @@ monitoring/python/system_snapshot.py
 
 功能：
 
-* CPU Count
-* Memory Available
-* Load Average
-* Disk Usage
-* Disk Status
+- Hostname
+- CPU Count
+- Memory Available
+- Load Average
+- Disk Usage
+- Disk Status
+- UTC Timestamp
+- JSON Export
 
-輸出格式：
+輸出範例：
 
 ```json
 {
-    "time": "2026-06-08T16:11:31+00:00",
+    "time": "2026-06-13 11:08:46.203933+00:00",
     "hostname": "manual-vm",
-    "memory_available": "14510604 kB",
-    "load_average": "1.17, 1.08, 1.06",
-    "disk_usage": "4%",
+    "memory_available": "14306020 kB",
+    "load_average": "1.03, 1.05, 1.01",
+    "disk_usage": "7%",
     "disk_status": "OK",
     "cpu_count": 4
 }
@@ -132,21 +130,107 @@ docs/python-system-snapshot.md
 
 ---
 
+## FastAPI Monitoring API
+
+建立：
+
+```text
+api/main.py
+```
+
+目前已完成 API：
+
+```http
+GET /
+GET /snapshot
+```
+
+---
+
+# API 使用方式
+
+## 啟動 API Server
+
+```bash
+uvicorn api.main:app --host 0.0.0.0 --port 8000
+```
+
+---
+
+## GET /
+
+用途：
+
+```text
+確認 API Server 正常回應
+```
+
+測試：
+
+```bash
+curl http://localhost:8000/
+```
+
+Response：
+
+```json
+{
+    "message": "HPC AI Benchmark Platform"
+}
+```
+
+---
+
+## GET /snapshot
+
+用途：
+
+```text
+取得即時系統監控資料
+```
+
+測試：
+
+```bash
+curl http://localhost:8000/snapshot
+```
+
+Response：
+
+```json
+{
+    "time": "2026-06-13 11:08:46.203933+00:00",
+    "hostname": "manual-vm",
+    "memory_available": "14306020 kB",
+    "load_average": "1.03, 1.05, 1.01",
+    "disk_usage": "7%",
+    "disk_status": "OK",
+    "cpu_count": 4
+}
+```
+
+---
+
 # 專案目錄結構
 
 ```text
 hpc-ai-benchmark-platform
 ├── api
+│   └── main.py
 ├── benchmark
 ├── dashboards
 ├── docs
 ├── gitops
 ├── infra
 ├── monitoring
+│   ├── scripts
+│   │   └── system_snapshot.sh
+│   └── python
+│       └── system_snapshot.py
 └── reports
 ```
 
-詳細說明請參考：
+詳細架構說明：
 
 ```text
 docs/project-architecture.md
@@ -170,10 +254,25 @@ bash monitoring/scripts/system_snapshot.sh
 python3 monitoring/python/system_snapshot.py
 ```
 
-查看結果：
+查看 JSON 輸出：
 
 ```bash
 cat reports/system_snapshot.json
+```
+
+---
+
+## FastAPI Monitoring API
+
+```bash
+uvicorn api.main:app --host 0.0.0.0 --port 8000
+```
+
+測試：
+
+```bash
+curl http://localhost:8000/
+curl http://localhost:8000/snapshot
 ```
 
 ---
@@ -182,77 +281,96 @@ cat reports/system_snapshot.json
 
 本專案目前已學習：
 
-* Linux System Analysis
-* Shell Script
-* Cron Job
-* Git Workflow
-* Python Function
-* Python Class
-* JSON Export
-* Monitoring Data Collection
+- Linux System Analysis
+- Process / Memory / Network Analysis
+- vmstat / iostat / sar
+- Shell Script
+- Cron Job
+- Git Workflow
+- Python Function
+- Python Class
+- Python Import
+- JSON Export
+- FastAPI
+- REST API
+- Monitoring Data Collection
+- API Endpoint Design
 
 ---
 
 # 後續規劃
 
-## Phase 4
+## Phase 4：FastAPI Monitoring API
 
-FastAPI
+已完成：
+
+- [x] GET /
+- [x] GET /snapshot
+
+下一步：
+
+- [ ] GET /health
+- [ ] API Error Handling
+- [ ] API Documentation
+
+---
+
+## Phase 5：Benchmark Module
 
 預計實作：
+
+- CPU Benchmark
+- Memory Benchmark
+- Disk Benchmark
+
+---
+
+## Phase 6：Dashboard
+
+預計實作：
+
+- Grafana
+- Monitoring Dashboard
+
+---
+
+## Phase 7：Infrastructure
+
+預計實作：
+
+- Terraform
+- Kubernetes
+- Helm
+
+---
+
+## Phase 8：GitOps
+
+預計實作：
+
+- ArgoCD
+- GitOps Workflow
+
+---
+
+# 專案定位
+
+本專案不是單純練習指令或寫 Script。
+
+目標是從 Linux 基礎開始，逐步建立一套具備以下能力的工程作品：
 
 ```text
-GET /
-GET /snapshot
-GET /health
-```
-
----
-
-## Phase 5
-
-Benchmark Module
-
-預計實作：
-
-* CPU Benchmark
-* Memory Benchmark
-* Disk Benchmark
-
----
-
-## Phase 6
-
+Metrics Collection
+↓
+Automation
+↓
+Python Collector
+↓
+REST API
+↓
 Dashboard
-
-預計實作：
-
-* Grafana
-* Monitoring Dashboard
-
----
-
-## Phase 7
-
-Infrastructure
-
-預計實作：
-
-* Terraform
-* Kubernetes
-* Helm
-
----
-
-## Phase 8
-
-GitOps
-
-預計實作：
-
-* ArgoCD
-* GitOps Workflow
-
-```
+↓
+Infrastructure Automation
 ```
 
+可作為 SRE、DevOps、Platform Engineer、MLOps 或 AI Infrastructure 相關職位的學習與面試作品。
