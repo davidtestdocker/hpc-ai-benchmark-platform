@@ -8,12 +8,13 @@
 
 目前已完成：
 
-- Linux 效能分析
-- Shell Script 自動化監控
-- Cron 自動執行
-- Python Monitoring Collector
-- JSON Report 輸出
-- FastAPI Monitoring API
+* Linux 效能分析
+* Shell Script 自動化監控
+* Cron 自動執行
+* Python Monitoring Collector
+* JSON Report 輸出
+* FastAPI Monitoring API
+* Enhanced Health Check
 
 ---
 
@@ -43,12 +44,12 @@ GitOps
 
 已完成：
 
-- Process Analysis
-- Memory Analysis
-- Network Analysis
-- vmstat Analysis
-- iostat Analysis
-- SAR Analysis
+* Process Analysis
+* Memory Analysis
+* Network Analysis
+* vmstat Analysis
+* iostat Analysis
+* SAR Analysis
 
 相關文件：
 
@@ -73,13 +74,13 @@ monitoring/scripts/system_snapshot.sh
 
 功能：
 
-- 取得主機名稱
-- 取得可用記憶體
-- 取得 Load Average
-- 取得磁碟使用率
-- 判斷磁碟狀態
-- 輸出 Log
-- 使用 Cron 自動執行
+* 取得主機名稱
+* 取得可用記憶體
+* 取得 Load Average
+* 取得磁碟使用率
+* 判斷磁碟狀態
+* 輸出 Log
+* 使用 Cron 自動執行
 
 相關文件：
 
@@ -99,14 +100,14 @@ monitoring/python/system_snapshot.py
 
 功能：
 
-- Hostname
-- CPU Count
-- Memory Available
-- Load Average
-- Disk Usage
-- Disk Status
-- UTC Timestamp
-- JSON Export
+* Hostname
+* CPU Count
+* Memory Available
+* Load Average
+* Disk Usage
+* Disk Status
+* UTC Timestamp
+* JSON Export
 
 輸出範例：
 
@@ -143,6 +144,20 @@ api/main.py
 ```http
 GET /
 GET /snapshot
+GET /health
+```
+
+功能：
+
+* API Service
+* 即時監控資料查詢
+* 健康狀態檢查
+* Monitoring API 設計
+
+相關文件：
+
+```text
+docs/fastapi-monitoring-api.md
 ```
 
 ---
@@ -162,7 +177,7 @@ uvicorn api.main:app --host 0.0.0.0 --port 8000
 用途：
 
 ```text
-確認 API Server 正常回應
+確認 API Server 正常運作
 ```
 
 測試：
@@ -208,6 +223,106 @@ Response：
     "cpu_count": 4
 }
 ```
+
+---
+
+## GET /health
+
+用途：
+
+```text
+評估系統健康狀態
+```
+
+檢查項目：
+
+* 磁碟使用率（Disk Usage）
+* 系統負載（Load Average）
+* 可用記憶體（Available Memory）
+
+測試：
+
+```bash
+curl http://localhost:8000/health
+```
+
+Response：
+
+```json
+{
+    "status": "healthy",
+    "checks": {
+        "disk": {
+            "status": "ok",
+            "value": "7%"
+        },
+        "load": {
+            "status": "ok",
+            "value": "1.11"
+        },
+        "memory": {
+            "status": "ok",
+            "value": "14389584 kB"
+        }
+    }
+}
+```
+
+---
+
+## Health Check 判斷邏輯
+
+### Disk Usage
+
+```text
+Disk Usage > 80%
+```
+
+狀態：
+
+```text
+warning
+```
+
+---
+
+### Load Average
+
+```text
+Load Average > CPU Core × 2
+```
+
+狀態：
+
+```text
+warning
+```
+
+---
+
+### Available Memory
+
+```text
+Available Memory < 1GB
+```
+
+狀態：
+
+```text
+warning
+```
+
+---
+
+### Health Status
+
+#### healthy
+
+所有檢查皆正常。
+
+#### degraded
+
+任一檢查項目異常。
 
 ---
 
@@ -273,6 +388,7 @@ uvicorn api.main:app --host 0.0.0.0 --port 8000
 ```bash
 curl http://localhost:8000/
 curl http://localhost:8000/snapshot
+curl http://localhost:8000/health
 ```
 
 ---
@@ -281,20 +397,26 @@ curl http://localhost:8000/snapshot
 
 本專案目前已學習：
 
-- Linux System Analysis
-- Process / Memory / Network Analysis
-- vmstat / iostat / sar
-- Shell Script
-- Cron Job
-- Git Workflow
-- Python Function
-- Python Class
-- Python Import
-- JSON Export
-- FastAPI
-- REST API
-- Monitoring Data Collection
-- API Endpoint Design
+* Linux System Analysis
+* Process Analysis
+* Memory Analysis
+* Network Analysis
+* vmstat
+* iostat
+* sar
+* Shell Script
+* Cron Job
+* Git Workflow
+* Python Function
+* Python Class
+* Python Import
+* JSON Export
+* FastAPI
+* REST API
+* Monitoring API Design
+* Health Check Design
+* Dictionary
+* Service Layer Concept
 
 ---
 
@@ -304,14 +426,20 @@ curl http://localhost:8000/snapshot
 
 已完成：
 
-- [x] GET /
-- [x] GET /snapshot
+* [x] GET /
+* [x] GET /snapshot
+* [x] GET /health
+* [x] Enhanced Health Check
+* [x] Disk Usage Health Check
+* [x] Load Average Health Check
+* [x] Memory Health Check
 
-下一步：
+進行中：
 
-- [ ] GET /health
-- [ ] API Error Handling
-- [ ] API Documentation
+* [ ] Swagger API Documentation
+* [ ] API Metadata
+* [ ] API Tags
+* [ ] Response Model
 
 ---
 
@@ -319,9 +447,9 @@ curl http://localhost:8000/snapshot
 
 預計實作：
 
-- CPU Benchmark
-- Memory Benchmark
-- Disk Benchmark
+* CPU Benchmark
+* Memory Benchmark
+* Disk Benchmark
 
 ---
 
@@ -329,8 +457,8 @@ curl http://localhost:8000/snapshot
 
 預計實作：
 
-- Grafana
-- Monitoring Dashboard
+* Grafana
+* Monitoring Dashboard
 
 ---
 
@@ -338,9 +466,9 @@ curl http://localhost:8000/snapshot
 
 預計實作：
 
-- Terraform
-- Kubernetes
-- Helm
+* Terraform
+* Kubernetes
+* Helm
 
 ---
 
@@ -348,14 +476,14 @@ curl http://localhost:8000/snapshot
 
 預計實作：
 
-- ArgoCD
-- GitOps Workflow
+* ArgoCD
+* GitOps Workflow
 
 ---
 
 # 專案定位
 
-本專案不是單純練習指令或寫 Script。
+本專案不是單純練習指令或撰寫 Script。
 
 目標是從 Linux 基礎開始，逐步建立一套具備以下能力的工程作品：
 
@@ -368,9 +496,20 @@ Python Collector
 ↓
 REST API
 ↓
+Monitoring Service
+↓
 Dashboard
 ↓
 Infrastructure Automation
 ```
 
-可作為 SRE、DevOps、Platform Engineer、MLOps 或 AI Infrastructure 相關職位的學習與面試作品。
+可作為：
+
+* SRE
+* DevOps Engineer
+* Platform Engineer
+* MLOps Engineer
+* AI Infrastructure Engineer
+
+相關職位的學習與面試作品。
+

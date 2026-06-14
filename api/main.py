@@ -12,3 +12,11 @@ def get_snapshot():
     snapshot = SystemSnapshot()
 
     return snapshot.generate_snapshot()
+
+
+@app.get("/health")
+def health():
+
+    snapshot = SystemSnapshot()
+    return snapshot.health_check()
+    
