@@ -207,6 +207,222 @@ cat /proc/$$/oom_score
 ```
 
 ---
+## RSS 與 VIRT
+
+查看：
+
+```bash
+ps aux
+```
+
+或：
+
+```bash
+top
+```
+
+常見欄位：
+
+### RSS
+
+Resident Set Size
+
+```text
+Process 目前實際使用的實體記憶體（RAM）。
+```
+
+例如：
+
+```text
+RSS = 500MB
+```
+
+代表該 Process 目前實際佔用約 500MB RAM。
+
+---
+
+### VIRT
+
+Virtual Memory
+
+```text
+Process 可存取的虛擬記憶體空間。
+```
+
+包含：
+
+* 實際配置的記憶體
+* Shared Library
+* Memory Mapping
+* 尚未真正使用的記憶體空間
+
+通常：
+
+```text
+VIRT > RSS
+```
+
+因為虛擬記憶體不一定全部配置到實體記憶體。
+
+---
+
+## Swap
+
+查看：
+
+```bash
+free -h
+```
+
+範例：
+
+```text
+Swap: 2.0G 0B 2.0G
+```
+
+用途：
+
+當實體記憶體不足時，
+
+Linux 會將較少使用的 Memory Page 移動到磁碟上的 Swap 空間。
+
+流程：
+
+```text
+RAM 不足
+↓
+Kernel
+↓
+Swap
+↓
+釋放 RAM
+```
+
+---
+
+### Swap 缺點
+
+磁碟速度遠慢於 RAM。
+
+因此：
+
+```text
+大量使用 Swap
+=
+系統效能下降
+```
+
+通常代表：
+
+```text
+Memory Pressure
+```
+
+---
+
+## Page Cache
+
+Linux 會將最近讀取過的檔案保存在記憶體中。
+
+目的：
+
+```text
+減少磁碟讀取次數
+提升 I/O 效能
+```
+
+因此：
+
+```text
+Cached 很大
+```
+
+不代表記憶體不足。
+
+當應用程式需要記憶體時：
+
+```text
+Linux
+↓
+回收 Page Cache
+↓
+提供給應用程式
+```
+
+因此：
+
+```text
+Page Cache
+=
+可回收記憶體
+```
+
+---
+
+## Memory Pressure
+
+Memory Pressure：
+
+```text
+系統可用記憶體逐漸不足的狀態
+```
+
+常見流程：
+
+```text
+Memory Usage 增加
+↓
+MemAvailable 降低
+↓
+開始使用 Swap
+↓
+Memory Pressure
+↓
+OOM Killer
+```
+
+觀察重點：
+
+```text
+MemAvailable
+Swap Usage
+OOM Events
+```
+
+---
+
+## AI Workload Memory Characteristics
+
+AI 與 LLM 工作負載通常消耗大量記憶體。
+
+常見服務：
+
+* vLLM
+* Ollama
+* PyTorch
+* TensorFlow
+
+觀察重點：
+
+* MemAvailable
+* RSS
+* Swap Usage
+* OOM Events
+
+若記憶體不足：
+
+```text
+Inference Failure
+Container Restart
+OOMKilled
+Service Unavailable
+```
+
+皆有可能發生。
+
+因此：
+
+Memory Analysis 是 AI Infrastructure Engineer 與 GPU Platform Engineer 的核心能力之一。
 
 ## Kubernetes 關聯
 

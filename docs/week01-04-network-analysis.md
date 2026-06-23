@@ -221,6 +221,261 @@ TCP 連線已結束
 
 ---
 
+### SYN-SENT
+
+```text
+SYN-SENT
+```
+
+說明：
+
+```text
+Client 已送出 TCP SYN 封包，
+
+正在等待 Server 回應。
+```
+
+流程：
+
+```text
+Client
+↓ SYN
+Server
+```
+
+若長時間停留在：
+
+```text
+SYN-SENT
+```
+
+可能代表：
+
+* Server 未啟動
+* Firewall 阻擋
+* Network Routing 問題
+
+---
+
+### SYN-RECV
+
+```text
+SYN-RECV
+```
+
+說明：
+
+```text
+Server 已收到 SYN，
+
+並回覆 SYN-ACK，
+
+等待 Client 回覆 ACK。
+```
+
+流程：
+
+```text
+Client
+↓ SYN
+
+Server
+↓ SYN-ACK
+
+等待 ACK
+```
+
+大量 SYN-RECV 可能代表：
+
+* SYN Flood Attack
+* Client 異常中斷
+* 網路異常
+
+---
+
+### CLOSE-WAIT
+
+```text
+CLOSE-WAIT
+```
+
+說明：
+
+```text
+對方已關閉連線，
+
+但本地程式尚未關閉 Socket。
+```
+
+大量 CLOSE-WAIT 通常代表：
+
+```text
+Application Bug
+```
+
+例如：
+
+* Socket 未正確關閉
+* Connection Leak
+
+---
+
+### FIN-WAIT
+
+```text
+FIN-WAIT-1
+FIN-WAIT-2
+```
+
+說明：
+
+```text
+本地端已準備關閉 TCP Connection，
+
+等待對方回應。
+```
+
+---
+
+## TCP Three-Way Handshake
+
+TCP 建立連線流程：
+
+```text
+Client
+↓ SYN
+
+Server
+↓ SYN-ACK
+
+Client
+↓ ACK
+
+Connection Established
+```
+
+建立完成後：
+
+```text
+ESTABLISHED
+```
+
+---
+
+## TCP Four-Way Close
+
+TCP 關閉流程：
+
+```text
+Client
+↓ FIN
+
+Server
+↓ ACK
+
+Server
+↓ FIN
+
+Client
+↓ ACK
+
+TIME-WAIT
+```
+
+因此：
+
+```text
+TIME-WAIT
+```
+
+是正常現象。
+
+並不代表系統異常。
+
+---
+
+## 常見排障指令
+
+查看監聽 Port：
+
+```bash
+ss -tulnp
+```
+
+查看已建立連線：
+
+```bash
+ss -ntp
+```
+
+查看特定 Port：
+
+```bash
+ss -tulnp | grep 8000
+```
+
+查看 DNS 是否正常：
+
+```bash
+nslookup google.com
+```
+
+或：
+
+```bash
+dig google.com
+```
+
+查看網路連通性：
+
+```bash
+ping <IP>
+```
+
+查看路由路徑：
+
+```bash
+traceroute <IP>
+```
+
+---
+
+## Kubernetes 關聯
+
+後續進入 Kubernetes 後：
+
+常見排障流程：
+
+```text
+Pod Running
+↓
+Service
+↓
+Endpoints
+↓
+Ingress
+↓
+Application
+```
+
+若 Service 無法存取：
+
+仍應先確認：
+
+```text
+Process
+↓
+Listen Port
+↓
+TCP Connection
+```
+
+再往 Kubernetes Layer 排查。
+
+```
+```
+
+
 ## 實際觀察
 
 執行：

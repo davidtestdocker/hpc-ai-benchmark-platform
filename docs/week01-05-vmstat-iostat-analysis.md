@@ -127,6 +127,78 @@ CPU 已經不夠用
 
 ## b (Blocked)
 
+## bi / bo
+
+欄位：
+
+```text
+bi
+bo
+```
+
+代表：
+
+```text
+bi = Blocks In
+```
+
+每秒從磁碟讀取的資料量。
+
+---
+
+```text
+bo = Blocks Out
+```
+
+每秒寫入磁碟的資料量。
+
+---
+
+例如：
+
+```text
+bi = 5000
+```
+
+可能表示：
+
+```text
+大量資料讀取
+```
+
+---
+
+例如：
+
+```text
+bo = 8000
+```
+
+可能表示：
+
+```text
+大量資料寫入
+```
+
+---
+
+分析 Disk Bottleneck 時：
+
+除了觀察：
+
+```text
+wa
+```
+
+也應搭配：
+
+```text
+bi
+bo
+```
+
+一起判斷。
+
 代表：
 
 ```text
@@ -649,6 +721,71 @@ Disk Bottleneck
 ```
 
 ---
+
+# AI Infrastructure 關聯
+
+AI 與 HPC 工作負載通常具有：
+
+```text
+大量 CPU 運算
+大量磁碟讀取
+大量模型載入
+```
+
+例如：
+
+* PyTorch
+* TensorFlow
+* vLLM
+* Ollama
+
+---
+
+模型載入時：
+
+```text
+Storage
+↓
+Memory
+↓
+GPU
+```
+
+資料需要逐層搬移。
+
+---
+
+若觀察到：
+
+```text
+wa 很高
+await 很高
+util 接近 100%
+```
+
+即使：
+
+```text
+CPU 使用率不高
+```
+
+仍可能導致：
+
+```text
+模型載入緩慢
+Inference Latency 增加
+Training Throughput 降低
+```
+
+因此：
+
+```text
+vmstat
+iostat
+```
+
+是 AI Infrastructure Engineer 分析效能瓶頸的重要工具。
+
 
 # 本章重點
 

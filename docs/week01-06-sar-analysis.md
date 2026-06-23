@@ -303,6 +303,76 @@ Grafana
 
 ---
 
+# 常用 SAR 指令
+
+查看 CPU：
+
+```bash
+sar -u 1 5
+```
+
+---
+
+查看 Memory：
+
+```bash
+sar -r 1 5
+```
+
+重點：
+
+```text
+kbmemfree
+kbmemused
+%memused
+```
+
+---
+
+查看 Disk：
+
+```bash
+sar -d 1 5
+```
+
+重點：
+
+```text
+tps
+rkB/s
+wkB/s
+```
+
+---
+
+查看 Network：
+
+```bash
+sar -n DEV 1 5
+```
+
+重點：
+
+```text
+rxkB/s
+txkB/s
+```
+
+---
+
+查看歷史資料：
+
+```bash
+sar -u -f /var/log/sysstat/sa07
+```
+
+用途：
+
+```text
+分析過去特定時間的系統狀態
+```
+
+
 # 重點整理
 
 常用指令：
@@ -321,6 +391,67 @@ ls -lh /var/log/sysstat/
 * %idle
 
 ---
+
+# AI Infrastructure 關聯
+
+AI 平台通常需要長時間運行：
+
+* vLLM
+* Ollama
+* Prometheus
+* Grafana
+* Kubernetes
+
+因此：
+
+```text
+瞬間 CPU 使用率
+```
+
+並不足以判斷系統健康度。
+
+更重要的是：
+
+```text
+長時間趨勢
+```
+
+例如：
+
+```text
+CPU 持續上升
+Memory 持續增加
+Disk Latency 持續惡化
+```
+
+這些問題通常需要透過：
+
+```text
+SAR
+Prometheus
+Grafana
+```
+
+進行分析。
+
+---
+
+在 HPC 與 AI Infrastructure 領域：
+
+```text
+Trend Analysis
+```
+
+往往比：
+
+```text
+即時監控
+```
+
+更重要。
+
+因為許多效能問題是逐漸累積形成的。
+
 
 # 結論
 
