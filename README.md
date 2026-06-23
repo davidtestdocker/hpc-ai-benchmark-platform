@@ -15,7 +15,7 @@
 * JSON Report 輸出
 * FastAPI Monitoring API
 * Enhanced Health Check
-
+* CPU Benchmark Tool
 ---
 
 # 學習路線
@@ -60,6 +60,7 @@ docs/memory-analysis.md
 docs/network-analysis.md
 docs/vmstat-iostat-analysis.md
 docs/sar-analysis.md
+docs/cpu-benchmark.md
 ```
 
 ---
@@ -516,13 +517,17 @@ Completed
 
 ## Phase 5：Benchmark Module
 
-預計實作：
+已完成：
 
-* CPU Benchmark
-* Memory Benchmark
-* Disk Benchmark
-* Benchmark API
-* Benchmark Response Model
+- [x] CPU Benchmark Tool
+- [x] CPU Benchmark JSON Report
+
+下一步：
+
+- [ ] GET /benchmark/cpu
+- [ ] CPU Benchmark Response Model
+- [ ] Memory Benchmark
+- [ ] Disk Benchmark
 
 
 ---
